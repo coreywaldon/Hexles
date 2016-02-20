@@ -37,7 +37,7 @@ public class Main extends StateBasedGame {
         gc.setAlwaysRender(true);
         gc.setMaximumLogicUpdateInterval(60);
         gc.setVSync(false);
-        gc.setShowFPS(false);
+        gc.setShowFPS(true);
 
         this.addState(new GameState());
         this.addState(new MenuState());
