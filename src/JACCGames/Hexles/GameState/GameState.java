@@ -1,15 +1,23 @@
 package JACCGames.Hexles.GameState;
 
+import JACCGames.Hexles.Networking.ClientHandler;
+import JACCGames.Hexles.Networking.PacketMessage;
+import JACCGames.Hexles.Networking.ServerHandler;
 import JACCGames.Hexles.Objects.Hex;
 import JACCGames.Hexles.Resources.Resources;
-import org.newdawn.slick.*;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Server;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.*;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+
 import java.awt.Font;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -20,7 +28,27 @@ public class GameState extends BasicGameState {
     public static ArrayList<Hex> hexles = new ArrayList<>();
     public static float resMult = 1;
     public static int curPlayer = 1;
+    public static boolean isSinglePlayer = false, isServer = true;
+    public static boolean fullscreen = false, played = false, isOngoing = true, canPlay;
+    public static Server server;
+    public static Client client;
+    public int tcpPort = 54555, udpPort = 54777;
+    String IPAddress = "localhost";
     private String message = "Player "+curPlayer+"'s turn";
+
+    public static boolean isGameOngoing() {
+        for (Hex hex : hexles) {
+            if (hex.isActive > 0) return true;
+        }
+        return false;
+    }
+
+    public static void syncHex(float[] p) {
+        for (int i = 0; i < hexles.size(); i++) {
+            hexles.get(i).isActive = p[i];
+        }
+    }
+
     @Override
     public int getID() {
         return States.GAME;
@@ -28,6 +56,50 @@ public class GameState extends BasicGameState {
 
     @Override
     public void init(GameContainer gc, StateBasedGame s) throws SlickException {
+
+        if (isServer) {
+            canPlay = true;
+            server = new Server();
+            server.getKryo().register(PacketMessage.class);
+            System.out.println("PacketMessage registered");
+            server.getKryo().register(java.util.ArrayList.class);
+            server.getKryo().register(Hex.class);
+            server.getKryo().register(java.lang.Class.class);
+            server.getKryo().register(GameState.class);
+            server.getKryo().register(Circle.class);
+            server.getKryo().register(float[].class);
+
+            server.start();
+            try {
+                server.bind(tcpPort, udpPort);
+                System.out.println("Server bound successfully");
+            } catch (IOException e) {
+                e.printStackTrace();
+                gc.exit();
+            }
+            server.addListener(new ServerHandler(server, tcpPort, udpPort));
+        } else {
+            canPlay = false;
+            client = new Client();
+            System.out.println("PacketMessage registered");
+            client.start();
+            try {
+                client.connect(3000, "localhost", tcpPort, udpPort);
+            } catch (IOException e) {
+                e.printStackTrace();
+                gc.exit();
+            }
+            client.getKryo().register(java.util.ArrayList.class);
+            client.getKryo().register(PacketMessage.class);
+            client.getKryo().register(Hex.class);
+            client.getKryo().register(java.lang.Class.class);
+            client.getKryo().register(GameState.class);
+            client.getKryo().register(Circle.class);
+            client.getKryo().register(float[].class);
+            Music theme = new Music("res/Theme_1.ogg");
+            theme.play(1f, 1f);
+            client.addListener(new ClientHandler());
+        }
         for(int i = 0;i < 5; i++){
             for(int j = 0; j < 6; j++){
                 hexles.add(new Hex(60+(200*j), 60+(118*i), 0.25f, (int)(128*resMult), (int)(128*resMult)));
@@ -58,40 +130,33 @@ public class GameState extends BasicGameState {
         hexles.stream().filter(hex -> hex.isActive==0.5f).forEach(hex -> midHexTex.draw(hex.getX(), hex.getY(), hex.getScale()));
         hexles.stream().filter(hex -> hex.isActive<0.5f).forEach(hex -> deadHexTex.draw(hex.getX(), hex.getY(), hex.getScale()));
     }
-    boolean fullscreen = false, played = false;
+
     @Override
     public void update(GameContainer gc, StateBasedGame s, int delta) throws SlickException {
-        if (gc.getInput().isKeyPressed(Input.KEY_SPACE)) {
-            AppGameContainer agc = (AppGameContainer) gc;
-            fullscreen = !fullscreen;
-            float resMult = (1080f/gc.getHeight());
-            for(Hex hex:hexles){
-                hex.multCoordinates(resMult);
-            }
-            agc.setDisplayMode(1920, 1080, fullscreen);
-        }
-        if(!isGameOngoing()){
+        if (!isOngoing) {
             message = "Player "+((curPlayer==1)?2:1)+" wins!";
             if(!played){
                 Sound endGame = Resources.sounds.get("endgame");
-                endGame.play(1.5f, 0.5f);
+                endGame.play(1.5f, 4.5f);
                 played=!played;
             }
+            if (gc.getInput().isKeyPressed(Input.KEY_SPACE)) {
+                for (Hex hex : hexles)
+                    hex.isActive = 1f;
+                played = !played;
+                isOngoing = !isOngoing;
+            }
         }
-
-    }
-    public boolean isGameOngoing(){
-        for(Hex hex:hexles) {
-            if (hex.isActive > 0) return true;
-        }
-        return false;
     }
 
     @Override
     public void mousePressed(int button, int x, int y){
-        System.out.println("CLICK");
-        Rectangle rect = new Rectangle(x, y, 1, 1);
-        System.out.println(x+" "+y);
-        hexles.stream().filter(hex -> hex.collider.contains(rect) || hex.collider.intersects(rect)).forEach(Hex::isClicked);
+        if (canPlay) {
+            isGameOngoing();
+            System.out.println("CLICK");
+            Rectangle rect = new Rectangle(x, y, 1, 1);
+            System.out.println(x + " " + y);
+            hexles.stream().filter(hex -> hex.collider.contains(rect) || hex.collider.intersects(rect)).forEach(Hex::isClicked);
+        }
     }
 }
