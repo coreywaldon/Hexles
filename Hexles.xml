@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="hexles" default="all">
+
+
+    <property file="Hexles.properties"/>
+    <!-- Uncomment the following property if no tests compilation is needed -->
+    <!--
+    <property name="skip.tests" value="true"/>
+     -->
+
+    <!-- Compiler options -->
+
+    <property name="compiler.debug" value="on"/>
+    <property name="compiler.generate.no.warnings" value="off"/>
+    <property name="compiler.args" value=""/>
+    <property name="compiler.max.memory" value="700m"/>
+    <patternset id="ignored.files">
+        <exclude name="**/*.hprof/**"/>
+        <exclude name="**/*.pyc/**"/>
+        <exclude name="**/*.pyo/**"/>
+        <exclude name="**/*.rbc/**"/>
+        <exclude name="**/*~/**"/>
+        <exclude name="**/.DS_Store/**"/>
+        <exclude name="**/.git/**"/>
+        <exclude name="**/.hg/**"/>
+        <exclude name="**/.svn/**"/>
+        <exclude name="**/CVS/**"/>
+        <exclude name="**/RCS/**"/>
+        <exclude name="**/SCCS/**"/>
+        <exclude name="**/__pycache__/**"/>
+        <exclude name="**/_svn/**"/>
+        <exclude name="**/rcs/**"/>
+        <exclude name="**/vssver.scc/**"/>
+        <exclude name="**/vssver2.scc/**"/>
+    </patternset>
+    <patternset id="library.patterns">
+        <include name="*.war"/>
+        <include name="*.swc"/>
+        <include name="*.apk"/>
+        <include name="*.zip"/>
+        <include name="*.egg"/>
+        <include name="*.ane"/>
+        <include name="*.jar"/>
+        <include name="*.ear"/>
+    </patternset>
+    <patternset id="compiler.resources">
+        <exclude name="**/?*.java"/>
+        <exclude name="**/?*.form"/>
+        <exclude name="**/?*.class"/>
+        <exclude name="**/?*.groovy"/>
+        <exclude name="**/?*.scala"/>
+        <exclude name="**/?*.flex"/>
+        <exclude name="**/?*.kt"/>
+        <exclude name="**/?*.clj"/>
+        <exclude name="**/?*.aj"/>
+    </patternset>
+
+    <!-- JDK definitions -->
+
+    <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+    <path id="jdk.classpath.1.8">
+        <fileset dir="${jdk.home.1.8}">
+            <include name="jre/lib/charsets.jar"/>
+            <include name="jre/lib/deploy.jar"/>
+            <include name="jre/lib/ext/cldrdata.jar"/>
+            <include name="jre/lib/ext/dnsns.jar"/>
+            <include name="jre/lib/ext/jfxrt.jar"/>
+            <include name="jre/lib/ext/localedata.jar"/>
+            <include name="jre/lib/ext/nashorn.jar"/>
+            <include name="jre/lib/ext/sunec.jar"/>
+            <include name="jre/lib/ext/sunjce_provider.jar"/>
+            <include name="jre/lib/ext/sunpkcs11.jar"/>
+            <include name="jre/lib/ext/zipfs.jar"/>
+            <include name="jre/lib/javaws.jar"/>
+            <include name="jre/lib/jce.jar"/>
+            <include name="jre/lib/jfr.jar"/>
+            <include name="jre/lib/jfxswt.jar"/>
+            <include name="jre/lib/jsse.jar"/>
+            <include name="jre/lib/management-agent.jar"/>
+            <include name="jre/lib/plugin.jar"/>
+            <include name="jre/lib/resources.jar"/>
+            <include name="jre/lib/rt.jar"/>
+            <include name="lib/ant-javafx.jar"/>
+            <include name="lib/dt.jar"/>
+            <include name="lib/javafx-mx.jar"/>
+            <include name="lib/jconsole.jar"/>
+            <include name="lib/packager.jar"/>
+            <include name="lib/sa-jdi.jar"/>
+            <include name="lib/tools.jar"/>
+        </fileset>
+    </path>
+
+    <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+    <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+    <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+
+
+    <!-- Project Libraries -->
+
+    <path id="library.libs.classpath">
+        <fileset dir="${basedir}/libs">
+            <patternset refid="library.patterns"/>
+        </fileset>
+    </path>
+    <!-- Register Custom Compiler Taskdefs -->
+    <property name="javac2.home" value="${idea.home}/lib"/>
+    <path id="javac2.classpath">
+        <pathelement location="${javac2.home}/javac2.jar"/>
+        <pathelement location="${javac2.home}/jdom.jar"/>
+        <pathelement location="${javac2.home}/asm-all.jar"/>
+        <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+    </path>
+    <target name="register.custom.compilers">
+        <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+        <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions"
+                 classpathref="javac2.classpath"/>
+    </target>
+
+    <!-- Modules -->
+
+
+    <!-- Module Hexles -->
+
+    <dirname property="module.hexles.basedir" file="${ant.file}"/>
+
+
+    <property name="module.jdk.home.hexles" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.hexles" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.hexles" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.hexles" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+
+    <property name="hexles.output.dir" value="${module.hexles.basedir}/out/production/Hexles"/>
+    <property name="hexles.testoutput.dir" value="${module.hexles.basedir}/out/test/Hexles"/>
+
+    <path id="hexles.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="hexles.module.production.classpath">
+        <path refid="${module.jdk.classpath.hexles}"/>
+        <path refid="library.libs.classpath"/>
+    </path>
+
+    <path id="hexles.runtime.production.module.classpath">
+        <pathelement location="${hexles.output.dir}"/>
+        <path refid="library.libs.classpath"/>
+    </path>
+
+    <path id="hexles.module.classpath">
+        <path refid="${module.jdk.classpath.hexles}"/>
+        <pathelement location="${hexles.output.dir}"/>
+        <path refid="library.libs.classpath"/>
+    </path>
+
+    <path id="hexles.runtime.module.classpath">
+        <pathelement location="${hexles.testoutput.dir}"/>
+        <pathelement location="${hexles.output.dir}"/>
+        <path refid="library.libs.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.hexles">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.hexles">
+        <patternset refid="excluded.from.module.hexles"/>
+    </patternset>
+
+    <path id="hexles.module.sourcepath">
+        <dirset dir="${module.hexles.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.hexles" depends="compile.module.hexles.production,compile.module.hexles.tests"
+            description="Compile module Hexles"/>
+
+    <target name="compile.module.hexles.production" depends="register.custom.compilers"
+            description="Compile module Hexles; production classes">
+        <mkdir dir="${hexles.output.dir}"/>
+        <javac2 destdir="${hexles.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.hexles}/javac">
+            <compilerarg line="${compiler.args.hexles}"/>
+            <bootclasspath refid="hexles.module.bootclasspath"/>
+            <classpath refid="hexles.module.production.classpath"/>
+            <src refid="hexles.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.hexles"/>
+        </javac2>
+
+        <copy todir="${hexles.output.dir}">
+            <fileset dir="${module.hexles.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.hexles.tests" depends="register.custom.compilers,compile.module.hexles.production"
+            description="compile module Hexles; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.hexles" description="cleanup module">
+        <delete dir="${hexles.output.dir}"/>
+        <delete dir="${hexles.testoutput.dir}"/>
+    </target>
+
+    <target name="init" description="Build initialization">
+        <!-- Perform any build initialization in this target -->
+    </target>
+
+    <target name="clean" depends="clean.module.hexles" description="cleanup all"/>
+
+    <target name="build.modules" depends="init, clean, compile.module.hexles" description="build all modules"/>
+
+    <target name="all" depends="build.modules" description="build all"/>
+</project>

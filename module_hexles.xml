@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_hexles" default="compile.module.hexles">
+    <dirname property="module.hexles.basedir" file="${ant.file.module_hexles}"/>
+
+    <property name="module.jdk.home.hexles" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.hexles" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.hexles" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.hexles" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+
+    <property name="hexles.output.dir" value="${module.hexles.basedir}/out/production/Hexles"/>
+    <property name="hexles.testoutput.dir" value="${module.hexles.basedir}/out/test/Hexles"/>
+
+    <path id="hexles.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="hexles.module.production.classpath">
+        <path refid="${module.jdk.classpath.hexles}"/>
+        <path refid="library.libs.classpath"/>
+    </path>
+
+    <path id="hexles.runtime.production.module.classpath">
+        <pathelement location="${hexles.output.dir}"/>
+        <path refid="library.libs.classpath"/>
+    </path>
+
+    <path id="hexles.module.classpath">
+        <path refid="${module.jdk.classpath.hexles}"/>
+        <pathelement location="${hexles.output.dir}"/>
+        <path refid="library.libs.classpath"/>
+    </path>
+
+    <path id="hexles.runtime.module.classpath">
+        <pathelement location="${hexles.testoutput.dir}"/>
+        <pathelement location="${hexles.output.dir}"/>
+        <path refid="library.libs.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.hexles">
+        <patternset refid="ignored.files"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.hexles">
+        <patternset refid="excluded.from.module.hexles"/>
+    </patternset>
+
+    <path id="hexles.module.sourcepath">
+        <dirset dir="${module.hexles.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.hexles" depends="compile.module.hexles.production,compile.module.hexles.tests"
+            description="Compile module Hexles"/>
+
+    <target name="compile.module.hexles.production" depends="register.custom.compilers"
+            description="Compile module Hexles; production classes">
+        <mkdir dir="${hexles.output.dir}"/>
+        <javac2 destdir="${hexles.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.hexles}/javac">
+            <compilerarg line="${compiler.args.hexles}"/>
+            <bootclasspath refid="hexles.module.bootclasspath"/>
+            <classpath refid="hexles.module.production.classpath"/>
+            <src refid="hexles.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.hexles"/>
+        </javac2>
+
+        <copy todir="${hexles.output.dir}">
+            <fileset dir="${module.hexles.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.hexles.tests" depends="register.custom.compilers,compile.module.hexles.production"
+            description="compile module Hexles; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.hexles" description="cleanup module">
+        <delete dir="${hexles.output.dir}"/>
+        <delete dir="${hexles.testoutput.dir}"/>
+    </target>
+</project>

@@ -1,9 +1,7 @@
 package JACCGames.Hexles.GameState;
 
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
+import JACCGames.Hexles.Resources.Resources;
+import org.newdawn.slick.*;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -11,6 +9,8 @@ import org.newdawn.slick.state.StateBasedGame;
  * Created by corey on 2/19/2016.
  */
 public class MenuState extends BasicGameState {
+    public float resMult = 1f;
+
     @Override
     public int getID() {
         return States.MENU;
@@ -23,7 +23,12 @@ public class MenuState extends BasicGameState {
 
     @Override
     public void render(GameContainer gc, StateBasedGame s, Graphics g) throws SlickException {
-        g.drawString("Menu state, yay", 50, 50);
+        Resources rc = new Resources();
+        Image bg = Resources.images.get("bg");
+        Image logo = Resources.images.get("logo");
+        logo.setFilter(Image.FILTER_LINEAR);
+        bg.draw(0, 0, resMult);
+        logo.draw((gc.getWidth() / 2) - (logo.getWidth() * 0.15f), gc.getHeight() * 0.05f, 0.3f);
     }
 
     @Override
