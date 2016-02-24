@@ -1,6 +1,6 @@
 package JACCGames.Hexles;
 
-import JACCGames.Hexles.GameState.GameState;
+import JACCGames.Hexles.GameState.MenuState;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -40,7 +40,8 @@ public class Main extends StateBasedGame {
         gc.setVSync(true);
         gc.setShowFPS(true);
 
-        this.addState(new GameState());
+        this.addState(new MenuState());
+        //this.addState(new GameState());
     }
 
 

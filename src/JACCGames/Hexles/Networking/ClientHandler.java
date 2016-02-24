@@ -1,7 +1,6 @@
 package JACCGames.Hexles.Networking;
 
 import JACCGames.Hexles.GameState.GameState;
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
@@ -9,7 +8,6 @@ import com.esotericsoftware.kryonet.Listener;
  * Created by corey on 2/21/2016.
  */
 public class ClientHandler extends Listener {
-    static Client client;
 
     public static void main(String[] args) throws Exception {
         System.out.println("Connecting");
