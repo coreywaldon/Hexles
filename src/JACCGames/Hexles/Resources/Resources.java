@@ -1,8 +1,5 @@
 package JACCGames.Hexles.Resources;
 
-/**
- * Created by corey on 2/19/2016.
- */
 
 import org.newdawn.slick.*;
 
@@ -29,7 +26,7 @@ public class Resources implements Runnable {
     }
 
     private Image loadImage(String path) throws SlickException{
-        return new Image(path, false, Image.FILTER_NEAREST);
+        return new Image(path, false, Image.FILTER_LINEAR);
     }
 
     private Sound loadSound(String path) throws SlickException{
@@ -47,6 +44,9 @@ public class Resources implements Runnable {
             images.put("midHex", loadImage("res/MidHex.png"));
             images.put("bg", loadImage("res/bg.png"));
             images.put("logo", loadImage("res/Logo.png"));
+            images.put("button", loadImage("res/button.png"));
+            images.put("buttonHi", loadImage("res/buttonHi.png"));
+            images.put("buttonPress", loadImage("res/buttonPress.png"));
             sounds.put("click", loadSound("res/Click.ogg"));
             sounds.put("endgame", loadSound("res/Victory.ogg"));
         } catch (SlickException e) {

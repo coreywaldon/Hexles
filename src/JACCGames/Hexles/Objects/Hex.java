@@ -9,9 +9,6 @@ import org.newdawn.slick.geom.Shape;
 
 import static JACCGames.Hexles.GameState.GameState.hexles;
 
-/**
- * Created by corey on 2/19/2016.
- */
 public class Hex {
     public Circle collider;
     public float isActive = 1;
@@ -42,14 +39,14 @@ public class Hex {
             click.play();
             click.play(2f, 0.3f);
             GameState.curPlayer = (GameState.curPlayer==1) ? 2:1;
-            System.out.println(GameState.curPlayer);
             this.isActive -= 0.5;
             hexles.stream().filter(hex -> checkCollision(hex.collider)).forEach(hex -> hex.isActive -= 0.5);
-            if (GameState.isServer)
-                GameState.server.sendToAllTCP(new PacketMessage().hexlesState);
-            else
-                GameState.client.sendTCP(new PacketMessage().hexlesState);
-            GameState.canPlay = false;
+            GameState.isOngoing = GameState.isGameOngoing();
+            if (!GameState.localGame) {
+                if (GameState.isServer) GameState.server.sendToAllTCP(new PacketMessage().hexlesState);
+                else GameState.client.sendTCP(new PacketMessage().hexlesState);
+                GameState.canPlay = false;
+            }
         }
     }
     public boolean checkCollision(Shape shape){

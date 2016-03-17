@@ -1,5 +1,6 @@
 package JACCGames.Hexles;
 
+import JACCGames.Hexles.GameState.GameState;
 import JACCGames.Hexles.GameState.MenuState;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -8,9 +9,6 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import java.io.File;
 
-/**
- * Created by corey on 2/18/2016.
- */
 public class Main extends StateBasedGame {
 
     public static boolean _APPLET = true;
@@ -41,7 +39,7 @@ public class Main extends StateBasedGame {
         gc.setShowFPS(true);
 
         this.addState(new MenuState());
-        //this.addState(new GameState());
+        this.addState(new GameState());
     }
 
 

@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Hexles">
+    <output-path>$PROJECT_DIR$/out/artifacts/Hexles</output-path>
+    <root id="archive" name="Hexles.jar">
+      <element id="module-output" name="Hexles" />
+      <element id="library" level="project" name="libs" />
+      <element id="directory" name="res">
+        <element id="file-copy" path="$PROJECT_DIR$/res/bg.png" />
+        <element id="file-copy" path="$PROJECT_DIR$/res/Click.ogg" />
+        <element id="file-copy" path="$PROJECT_DIR$/res/DeadHex.png" />
+        <element id="file-copy" path="$PROJECT_DIR$/res/Hex.png" />
+        <element id="file-copy" path="$PROJECT_DIR$/res/MidHex.png" />
+        <element id="file-copy" path="$PROJECT_DIR$/res/Victory.ogg" />
+      </element>
+    </root>
+  </artifact>
+</component>

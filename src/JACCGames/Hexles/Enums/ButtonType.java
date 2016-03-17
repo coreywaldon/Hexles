@@ -1,0 +1,8 @@
+package JACCGames.Hexles.Enums;
+
+/**
+ * Created by cowaldon859 on 2/24/16.
+ */
+public enum ButtonType {
+    BUTTON_LOCALGAME, BUTTON_FINDMATCH, BUTTON_OPTIONSMENU, BUTTON_EXITMENU, BUTTON_SOLO, BUTTON_PVPLOCAL, BUTTON_DIRECTCONNECT
+}
